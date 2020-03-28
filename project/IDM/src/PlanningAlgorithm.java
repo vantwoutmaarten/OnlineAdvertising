@@ -1,6 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -177,11 +177,50 @@ public class PlanningAlgorithm {
 		double[] V = new double[cmdp.getNumStates()];
 		
 		// TODO compute an optimal value function for the cmdp object
+		double[][] Q = new double[cmdp.getNumStates()][cmdp.getNumActions()];
+		double epsilon = 0.001;
+		double delta;
+		do {
+			delta = 0;
+			double[][] Q_next = new double[cmdp.getNumStates()][cmdp.getNumActions()];
+			double[] V_next = new double[cmdp.getNumStates()];
+			for (int i = 0; i < cmdp.getNumStates(); i++) {
+				for (int j = 0; j < cmdp.getNumActions(); j++) {
+					double sumValuesNextStep = 0;
+					for (int k = 0; k < cmdp.getNumStates(); k++) {
+						sumValuesNextStep += cmdp.getTransitionProbability(i, j, k) * V[k];
+					}
+					Q_next[i][j] = cmdp.getReward(i, j) + discountFactor * sumValuesNextStep;
+					if (V_next[i] < Q_next[i][j]) {
+						V_next[i] = Q_next[i][j];
+					}
+					delta = Math.max(delta, Q_next[i][j] - Q[i][j]);
+				}
+			}
+			Q = Q_next;
+			V = V_next;
+		} while (delta >= epsilon);
 		
 		
 		double[][] policy = new double[cmdp.getNumStates()][cmdp.getNumActions()];
 		
 		// TODO fill the policy array with probabilities
+		for (int i = 0; i < cmdp.getNumStates(); i++) {
+			ArrayList<Integer> maxIndex = new ArrayList<Integer>();
+			double maxValue = 0;
+			for (int j = 0; j < cmdp.getNumActions(); j++) {
+				if (maxValue < Q[i][j]) {
+					maxValue = Q[i][j];
+					maxIndex = new ArrayList<Integer>();
+					maxIndex.add(j);
+				} else if (maxValue == Q[i][j]) {
+					maxIndex.add(j);
+				}
+			}
+			for (Integer index : maxIndex) {
+				policy[i][index] = 1.0 / (double) maxIndex.size();
+			}
+		}
 		
 		ArrayList<double[][]> policies = new ArrayList<double[][]>();
 		policies.add(policy);
