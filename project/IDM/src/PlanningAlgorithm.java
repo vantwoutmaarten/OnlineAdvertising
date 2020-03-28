@@ -178,6 +178,7 @@ public class PlanningAlgorithm {
 		
 		// TODO compute an optimal value function for the cmdp object
 		
+		
 		double[][] policy = new double[cmdp.getNumStates()][cmdp.getNumActions()];
 		
 		// TODO fill the policy array with probabilities
