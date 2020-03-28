@@ -60,6 +60,7 @@ public class Simulator {
 		
 		System.out.println("Mean reward: "+meanReward);
 		System.out.println("Mean cost: "+meanCost);
+		System.out.println("Solution: " + solution);
 		
 	}
 }

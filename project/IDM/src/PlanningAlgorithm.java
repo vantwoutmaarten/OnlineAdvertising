@@ -1,6 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -171,12 +171,47 @@ public class PlanningAlgorithm {
 		return new Solution(policies, expectedReward, expectedCost, expectedRewardAgent, expectedCostAgent);
 	}
 	
+	private static double maxValue(double[] chars) {
+	    double max = chars[0];
+	    for (int ktr = 0; ktr < chars.length; ktr++) {
+	        if (chars[ktr] > max) {
+	            max = chars[ktr];
+	        }
+	    }
+	    return max;
+	}
+	
+	
 	public Solution solveVI(CMDP[] cmdps, double discountFactor) {
 		CMDP cmdp = cmdps[0];
 		
 		double[] V = new double[cmdp.getNumStates()];
 		
 		// TODO compute an optimal value function for the cmdp object
+		double[][] Q_new = new double[cmdp.getNumStates()][cmdp.getNumActions()];
+		double[][] Q_old = new double[cmdp.getNumStates()][cmdp.getNumActions()];
+		int n = 0;
+		double epsilon = 0.5;
+		double delta;
+		do {
+			delta = 0.0;
+			n++;
+			Q_old = Q_new;
+			for( int i = 0; i < Q_new.length; i++ )
+				   Arrays.fill( Q_new[i], 0);
+			
+			for(int i = 0; i < cmdp.getNumStates(); i++) {
+				for(int j = 0; j < cmdp.getNumActions(); j++) {
+					Q_new[i][j] += cmdp.getReward(i,j);
+					for(int t = 0; t < cmdp.getNumStates(); t++) {
+						Q_new[i][j] += discountFactor * cmdp.getTransitionProbability(i, j, t) + maxValue(Q_old[t]);
+					}
+					delta = Math.max(delta, Math.abs(Q_old[i][j] - Q_new[i][j]));
+				}
+			}
+		}while(delta < epsilon);
+
+		
 		
 		double[][] policy = new double[cmdp.getNumStates()][cmdp.getNumActions()];
 		

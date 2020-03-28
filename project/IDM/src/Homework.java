@@ -25,7 +25,7 @@ public class Homework {
 		// use the simulator to execute on run
 		Simulator sim = new Simulator(rnd);
 		sim.printActions();
-		sim.simulate(cmdps, solution, 1);
+		sim.simulate(cmdps, solution, 2);
 	}
 	
 	// Solve unconstrained problem for 1 agent with value iteration
