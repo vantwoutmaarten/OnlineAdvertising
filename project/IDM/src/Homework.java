@@ -59,6 +59,28 @@ public class Homework {
 		
 	}
 	
+	// Solve unconstrained problem for 1 agent with value iteration
+		public static void task1DF() {		
+			// Get CMDP model for 1 agent
+			CMDP cmdp = UserGenerator.getCMDPAdult();
+			CMDP[] cmdps = new CMDP[]{cmdp};
+			
+			
+			for (double gamma = 0.00; gamma <= 1; gamma += 0.05) {
+				// Solve the problem without constraints
+				PlanningAlgorithm alg = new PlanningAlgorithm();		
+				Solution solution = alg.solveVI(cmdps, gamma);
+				gamma = gamma * 10000;
+				gamma = Math.round(gamma);
+				gamma = gamma / 10000;
+				double sol = solution.getExpectedReward() * 10000;
+				sol = Math.round(sol);
+				sol = sol / 10000;
+				System.out.println("(" + gamma + "," + sol + ")");
+			}
+			
+		}
+	
 	// Solve unconstrained problem for 1 agent with cost
 	public static void task2() {		
 		// Get CMDP model for 1 agent
@@ -68,7 +90,7 @@ public class Homework {
 		// Assign cost
 		for (int s = 0; s < cmdp.getNumStates(); s++) {
 			for (int a = 0; a < cmdp.getNumActions(); a++) {
-				cmdp.assignCost(s, a, 2 * a);
+				cmdp.assignCost(s, a, 2 * (a + 1));
 			}
 		}
 		
@@ -106,7 +128,7 @@ public class Homework {
 		// Assign cost
 		for (int s = 0; s < cmdp.getNumStates(); s++) {
 			for (int a = 0; a < cmdp.getNumActions(); a++) {
-				cmdp.assignCost(s, a, 2 * a);
+				cmdp.assignCost(s, a, 2 * (a + 1));
 			}
 		}
 
@@ -129,14 +151,14 @@ public class Homework {
 		// Assign cost to child
 		for (int s = 0; s < cmdpChild.getNumStates(); s++) {
 			for (int a = 0; a < cmdpChild.getNumActions(); a++) {
-				cmdpChild.assignCost(s, a, 2 * a);
+				cmdpChild.assignCost(s, a, 2 * (a + 1));
 			}
 		}
 		
 		// Assign cost to adult
 		for (int s = 0; s < cmdpAdult.getNumStates(); s++) {
 			for (int a = 0; a < cmdpAdult.getNumActions(); a++) {
-				cmdpAdult.assignCost(s, a, 2 * a);
+				cmdpAdult.assignCost(s, a, 2 * (a + 1));
 			}
 		}
 		
@@ -203,7 +225,7 @@ public class Homework {
 						// Assign cost to child
 						for (int s = 0; s < cmdps[k].getNumStates(); s++) {
 							for (int a = 0; a < cmdps[k].getNumActions(); a++) {
-								cmdps[k].assignCost(s, a, 2 * a);
+								cmdps[k].assignCost(s, a, 2 * (a + 1));
 							}
 						}
 					}
@@ -213,7 +235,7 @@ public class Homework {
 						// Assign cost to adult
 						for (int s = 0; s < cmdps[k].getNumStates(); s++) {
 							for (int a = 0; a < cmdps[k].getNumActions(); a++) {
-								cmdps[k].assignCost(s, a, 2 * a);
+								cmdps[k].assignCost(s, a, 2 * (a + 1));
 							}
 						}
 					}
@@ -240,6 +262,6 @@ public class Homework {
 		}
 	
 	public static void main(String[] args) {
-		task5();
+		task1DF();
 	}
 }

@@ -187,21 +187,26 @@ public class PlanningAlgorithm {
 			// Array that hold maximum reward of all actions of a state for Q_next = Q_{n+1}
 			double[] V_next = new double[cmdp.getNumStates()];
 			
-			for (int i = 0; i < cmdp.getNumStates(); i++) {
-				for (int j = 0; j < cmdp.getNumActions(); j++) {
+			for (int s = 0; s < cmdp.getNumStates(); s++) {
+				for (int a = 0; a < cmdp.getNumActions(); a++) {
 					double sumValuesNextStep = 0;
-					for (int k = 0; k < cmdp.getNumStates(); k++) {
-						sumValuesNextStep += cmdp.getTransitionProbability(i, j, k) * V[k];
+					// Calculate sum of the returns of going to the next state.
+					for (int s_next = 0; s_next < cmdp.getNumStates(); s_next++) {
+						sumValuesNextStep += cmdp.getTransitionProbability(s, a, s_next) * V[s_next];
 					}
-					Q_next[i][j] = cmdp.getReward(i, j) + discountFactor * sumValuesNextStep;
-					if (V_next[i] < Q_next[i][j]) {
-						V_next[i] = Q_next[i][j];
+					// Update expected reward for state s and action a
+					Q_next[s][a] = cmdp.getReward(s, a) + discountFactor * sumValuesNextStep;
+					// Update maximum reward for a state s
+					if (V_next[s] < Q_next[s][a]) {
+						V_next[s] = Q_next[s][a];
 					}
-					delta = Math.max(delta, Q_next[i][j] - Q[i][j]);
+					// Update delta
+					delta = Math.max(delta, Q_next[s][a] - Q[s][a]);
 				}
 			}
 			Q = Q_next;
 			V = V_next;
+			// Loop while max updated value is larger or equal to epsilon
 		} while (delta >= epsilon);
 		
 		
@@ -209,20 +214,25 @@ public class PlanningAlgorithm {
 		
 		// TODO fill the policy array with probabilities
 		// It shares probability evenly if the expected reward is equal
-		for (int i = 0; i < cmdp.getNumStates(); i++) {
+		for (int s = 0; s < cmdp.getNumStates(); s++) {
+			// ArrayList of indices of maximum expected reward actions
 			ArrayList<Integer> maxIndex = new ArrayList<Integer>();
+			// maximum expected reward for any action for state s
 			double maxValue = 0;
-			for (int j = 0; j < cmdp.getNumActions(); j++) {
-				if (maxValue < Q[i][j]) {
-					maxValue = Q[i][j];
+			for (int a = 0; a < cmdp.getNumActions(); a++) {
+				// Update maxValue if return is higher and create new ArrayList of indices
+				if (maxValue < Q[s][a]) {
+					maxValue = Q[s][a];
 					maxIndex = new ArrayList<Integer>();
-					maxIndex.add(j);
-				} else if (maxValue == Q[i][j]) {
-					maxIndex.add(j);
+					maxIndex.add(a);
+				} else if (maxValue == Q[s][a]) {
+					// Add to existing ArrayList if expected reward is equal
+					maxIndex.add(a);
 				}
 			}
+			// Assign probabilities equal for max expected reward indices
 			for (Integer index : maxIndex) {
-				policy[i][index] = 1.0 / (double) maxIndex.size();
+				policy[s][index] = 1.0 / (double) maxIndex.size();
 			}
 		}
 		
