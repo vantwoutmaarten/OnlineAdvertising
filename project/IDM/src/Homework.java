@@ -91,7 +91,7 @@ public class Homework {
 		// Assign cost
 		for (int s = 0; s < cmdp.getNumStates(); s++) {
 			for (int a = 0; a < cmdp.getNumActions(); a++) {
-				cmdp.assignCost(s, a, 2 * (a + 1));
+				cmdp.assignCost(s, a, 2 * a);
 			}
 		}
 		
@@ -129,7 +129,7 @@ public class Homework {
 		// Assign cost
 		for (int s = 0; s < cmdp.getNumStates(); s++) {
 			for (int a = 0; a < cmdp.getNumActions(); a++) {
-				cmdp.assignCost(s, a, 2 * (a + 1));
+				cmdp.assignCost(s, a, 2 * a);
 			}
 		}
 
@@ -142,7 +142,7 @@ public class Homework {
 				System.out.println("(" + i + ", " + expectedRewards.get(expectedRewards.size() - 1) + ")");
 			}
 			catch (NoFeasibleSolutionException e) {
-				System.out.println("(" + i + ", " + 0 + ")");
+				System.out.println("No Solution");
 			}
 		}
 		
@@ -157,14 +157,14 @@ public class Homework {
 		// Assign cost to child
 		for (int s = 0; s < cmdpChild.getNumStates(); s++) {
 			for (int a = 0; a < cmdpChild.getNumActions(); a++) {
-				cmdpChild.assignCost(s, a, 2 * (a + 1));
+				cmdpChild.assignCost(s, a, 2 * a);
 			}
 		}
 		
 		// Assign cost to adult
 		for (int s = 0; s < cmdpAdult.getNumStates(); s++) {
 			for (int a = 0; a < cmdpAdult.getNumActions(); a++) {
-				cmdpAdult.assignCost(s, a, 2 * (a + 1));
+				cmdpAdult.assignCost(s, a, 2 * a);
 			}
 		}
 		
@@ -183,7 +183,7 @@ public class Homework {
 				System.out.println("Expected cost agent "+i+": "+expectedCost0);
 			}
 			catch (NoFeasibleSolutionException e) {
-				System.out.println("(" + i + ", " + 0 + ")");
+				System.out.println("No Solution");
 			}
 			
 		}
@@ -207,7 +207,7 @@ public class Homework {
 				expectedCost += expectedCost0;
 			}
 			catch (NoFeasibleSolutionException e) {
-				System.out.println("(" + i + ", " + 0 + ")");
+				System.out.println("No Solution");
 			}
 			
 		}
@@ -215,18 +215,23 @@ public class Homework {
 		System.out.println("Expected cost: "+expectedCost);
 		
 		// multi-agent problem: invest 20 in total
-		Solution combinedSolution = alg.solve(new CMDP[]{cmdpChild, cmdpAdult}, budgetPerAgent * 2); // TODO replace the number with the correct limit
-		System.out.println();
-		System.out.println("=========== MULTI-AGENT PLANNING ===========");
-		System.out.println("Expected reward: "+combinedSolution.getExpectedReward());
-		System.out.println("Expected reward agent 0: "+combinedSolution.getExpectedReward(0));
-		System.out.println("Expected reward agent 1: "+combinedSolution.getExpectedReward(1));
-		System.out.println("Expected cost total: "+combinedSolution.getExpectedCost());
-		System.out.println("Expected cost agent 0: "+combinedSolution.getExpectedCost(0));
-		System.out.println("Expected cost agent 1: "+combinedSolution.getExpectedCost(1));
-		
-		// simulate
-		sim.simulate(new CMDP[]{cmdpChild, cmdpAdult}, combinedSolution, 10000);
+		try {
+			Solution combinedSolution = alg.solve(new CMDP[]{cmdpChild, cmdpAdult}, budgetPerAgent * 2); // TODO replace the number with the correct limit
+			System.out.println();
+			System.out.println("=========== MULTI-AGENT PLANNING ===========");
+			System.out.println("Expected reward: "+combinedSolution.getExpectedReward());
+			System.out.println("Expected reward agent 0: "+combinedSolution.getExpectedReward(0));
+			System.out.println("Expected reward agent 1: "+combinedSolution.getExpectedReward(1));
+			System.out.println("Expected cost total: "+combinedSolution.getExpectedCost());
+			System.out.println("Expected cost agent 0: "+combinedSolution.getExpectedCost(0));
+			System.out.println("Expected cost agent 1: "+combinedSolution.getExpectedCost(1));
+			
+			// simulate
+			sim.simulate(new CMDP[]{cmdpChild, cmdpAdult}, combinedSolution, 10000);
+		}
+		catch (NoFeasibleSolutionException e) {
+			System.out.println("No Solution");
+		}
 	}
 	
 	// Solve constrained problem for 2 agents with trivial budget split
@@ -243,7 +248,7 @@ public class Homework {
 						// Assign cost to child
 						for (int s = 0; s < cmdps[k].getNumStates(); s++) {
 							for (int a = 0; a < cmdps[k].getNumActions(); a++) {
-								cmdps[k].assignCost(s, a, 2 * (a + 1));
+								cmdps[k].assignCost(s, a, 2 * a);
 							}
 						}
 					}
@@ -253,7 +258,7 @@ public class Homework {
 						// Assign cost to adult
 						for (int s = 0; s < cmdps[k].getNumStates(); s++) {
 							for (int a = 0; a < cmdps[k].getNumActions(); a++) {
-								cmdps[k].assignCost(s, a, 2 * (a + 1));
+								cmdps[k].assignCost(s, a, 2 * a);
 							}
 						}
 					}
@@ -278,13 +283,13 @@ public class Homework {
 						System.out.println("Runtime with " + i + " Children and " + j + " Adults and Budget " + budgetPerAgent * cmdps.length + " and runtime " + runtime);
 					}
 					catch (NoFeasibleSolutionException e) {
-						System.out.println("(" + i + ", " + 0 + ")");
+						System.out.println("No Solution");
 					}
 				}
 			}
 		}
 	
 	public static void main(String[] args) {
-		task3();
+		task4();
 	}
 }
