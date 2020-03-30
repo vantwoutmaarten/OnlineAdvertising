@@ -135,7 +135,7 @@ public class Homework {
 
 		PlanningAlgorithm alg = new PlanningAlgorithm();
 		ArrayList<Double> expectedRewards = new ArrayList<>();
-		for (int i = 1; i < 101; i++) {
+		for (int i = 0; i < 51; i++) {
 			try {
 				Solution solution = alg.solve(cmdps, i);
 				expectedRewards.add(solution.getExpectedReward());
@@ -236,10 +236,11 @@ public class Homework {
 	
 	// Solve constrained problem for 2 agents with trivial budget split
 		public static void task5() {	
+			System.out.println("Children \tAdults \tRuntime");
 			// Number of Children
-			for (int i = 1; i < 50; i++) {
+			for (int i = 1; i < 50; i += 6) {
 				// Number of Adults
-				for (int j = 1; j < 50 && i + j <= 50; j++) {
+				for (int j = 1; j < 50 && i + j <= 50; j += 6) {
 					// Get CMDP models
 					CMDP[] cmdps = new CMDP[i + j];
 					for (int k = 0; k < i; k++) {
@@ -274,13 +275,13 @@ public class Homework {
 					// multi-agent problem: invest 20 in total
 					try {
 						Solution combinedSolution = alg.solve(cmdps, budgetPerAgent * cmdps.length); // TODO replace the number with the correct limit
-						System.out.println();
+//						System.out.println();
 						
 						// simulate
-						sim.simulate(cmdps, combinedSolution, 1000);
+						sim.simulate(cmdps, combinedSolution, 1);
 						
-						double runtime = (System.nanoTime() - startTime) / 1000000000;
-						System.out.println("Runtime with " + i + " Children and " + j + " Adults and Budget " + budgetPerAgent * cmdps.length + " and runtime " + runtime);
+						double runtime = (System.nanoTime() - startTime) / 1000000000.0;
+						System.out.println(i + "\t \t \t" + j + "\t \t" + runtime);
 					}
 					catch (NoFeasibleSolutionException e) {
 						System.out.println("No Solution");
@@ -290,6 +291,6 @@ public class Homework {
 		}
 	
 	public static void main(String[] args) {
-		task4();
+		task5();
 	}
 }

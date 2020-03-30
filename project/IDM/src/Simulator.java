@@ -58,8 +58,8 @@ public class Simulator {
 			meanCost = ((meanCost * ((double) run)) + runCost) / ((double) (run+1));
 		}
 		
-		System.out.println("Mean reward: "+meanReward);
-		System.out.println("Mean cost: "+meanCost);
+//		System.out.println("Mean reward: "+meanReward);
+//		System.out.println("Mean cost: "+meanCost);
 		
 	}
 }
