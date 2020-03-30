@@ -231,7 +231,7 @@ public class Homework {
 					System.out.println();
 					
 					// simulate
-					sim.simulate(cmdps, combinedSolution, 10000);
+					sim.simulate(cmdps, combinedSolution, 1000);
 					
 					double runtime = (System.nanoTime() - startTime) / 1000000000;
 					System.out.println("Runtime with " + i + " Children and " + j + " Adults and Budget " + budgetPerAgent * cmdps.length + " and runtime " + runtime);
@@ -240,6 +240,6 @@ public class Homework {
 		}
 	
 	public static void main(String[] args) {
-		task1();
+		task5();
 	}
 }

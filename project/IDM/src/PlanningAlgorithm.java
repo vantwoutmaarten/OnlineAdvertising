@@ -174,6 +174,7 @@ public class PlanningAlgorithm {
 	public Solution solveVI(CMDP[] cmdps, double discountFactor) {
 		CMDP cmdp = cmdps[0];
 		
+		// Array that hold maximum reward of all actions of a state for Q_{n}
 		double[] V = new double[cmdp.getNumStates()];
 		
 		// TODO compute an optimal value function for the cmdp object
@@ -183,7 +184,9 @@ public class PlanningAlgorithm {
 		do {
 			delta = 0;
 			double[][] Q_next = new double[cmdp.getNumStates()][cmdp.getNumActions()];
+			// Array that hold maximum reward of all actions of a state for Q_next = Q_{n+1}
 			double[] V_next = new double[cmdp.getNumStates()];
+			
 			for (int i = 0; i < cmdp.getNumStates(); i++) {
 				for (int j = 0; j < cmdp.getNumActions(); j++) {
 					double sumValuesNextStep = 0;
@@ -205,6 +208,7 @@ public class PlanningAlgorithm {
 		double[][] policy = new double[cmdp.getNumStates()][cmdp.getNumActions()];
 		
 		// TODO fill the policy array with probabilities
+		// It shares probability evenly if the expected reward is equal
 		for (int i = 0; i < cmdp.getNumStates(); i++) {
 			ArrayList<Integer> maxIndex = new ArrayList<Integer>();
 			double maxValue = 0;
