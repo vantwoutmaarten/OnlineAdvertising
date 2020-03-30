@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Random;
+import org.apache.commons.math3.optim.linear.NoFeasibleSolutionException;
 
 
 public class Homework {
@@ -135,9 +136,14 @@ public class Homework {
 		PlanningAlgorithm alg = new PlanningAlgorithm();
 		ArrayList<Double> expectedRewards = new ArrayList<>();
 		for (int i = 1; i < 101; i++) {
-			Solution solution = alg.solve(cmdps, i);
-			expectedRewards.add(solution.getExpectedReward());
-			System.out.println("Expected reward budget " + i + ": " + expectedRewards.get(expectedRewards.size() - 1));
+			try {
+				Solution solution = alg.solve(cmdps, i);
+				expectedRewards.add(solution.getExpectedReward());
+				System.out.println("(" + i + ", " + expectedRewards.get(expectedRewards.size() - 1) + ")");
+			}
+			catch (NoFeasibleSolutionException e) {
+				System.out.println("(" + i + ", " + 0 + ")");
+			}
 		}
 		
 	}
@@ -168,12 +174,18 @@ public class Homework {
 		// Solve both problems separately without constraints and print expectations
 		System.out.println("=========== UNCONSTRAINED ===========");
 		for(int i=0; i<2; i++) {
-			CMDP cmdp = (i==0) ? cmdpChild : cmdpAdult;
-			Solution sol = alg.solveUnconstrained(new CMDP[]{cmdp});
-			double expectedReward0 = sol.getExpectedReward();
-			double expectedCost0 = sol.getExpectedCost();
-			System.out.println("Expected reward agent "+i+": "+expectedReward0);
-			System.out.println("Expected cost agent "+i+": "+expectedCost0);
+			try {
+				CMDP cmdp = (i==0) ? cmdpChild : cmdpAdult;
+				Solution sol = alg.solveUnconstrained(new CMDP[]{cmdp});
+				double expectedReward0 = sol.getExpectedReward();
+				double expectedCost0 = sol.getExpectedCost();
+				System.out.println("Expected reward agent "+i+": "+expectedReward0);
+				System.out.println("Expected cost agent "+i+": "+expectedCost0);
+			}
+			catch (NoFeasibleSolutionException e) {
+				System.out.println("(" + i + ", " + 0 + ")");
+			}
+			
 		}
 		
 		// trivial budget split: invest 10 in each agent
@@ -184,14 +196,20 @@ public class Homework {
 		double expectedReward = 0.0;
 		double expectedCost = 0.0;
 		for(int i=0; i<2; i++) {
-			CMDP cmdp = (i==0) ? cmdpChild : cmdpAdult;
-			Solution sol = alg.solve(new CMDP[]{cmdp}, budgetPerAgent); // TODO replace the number with the correct limit
-			double expectedReward0 = sol.getExpectedReward();
-			double expectedCost0 = sol.getExpectedCost();
-			System.out.println("Expected reward agent "+i+": "+expectedReward0);
-			System.out.println("Expected cost agent "+i+": "+expectedCost0);
-			expectedReward += expectedReward0;
-			expectedCost += expectedCost0;
+			try {
+				CMDP cmdp = (i==0) ? cmdpChild : cmdpAdult;
+				Solution sol = alg.solve(new CMDP[]{cmdp}, budgetPerAgent); // TODO replace the number with the correct limit
+				double expectedReward0 = sol.getExpectedReward();
+				double expectedCost0 = sol.getExpectedCost();
+				System.out.println("Expected reward agent "+i+": "+expectedReward0);
+				System.out.println("Expected cost agent "+i+": "+expectedCost0);
+				expectedReward += expectedReward0;
+				expectedCost += expectedCost0;
+			}
+			catch (NoFeasibleSolutionException e) {
+				System.out.println("(" + i + ", " + 0 + ")");
+			}
+			
 		}
 		System.out.println("Expected reward: "+expectedReward);
 		System.out.println("Expected cost: "+expectedCost);
@@ -249,19 +267,24 @@ public class Homework {
 					double budgetPerAgent = 10;
 					
 					// multi-agent problem: invest 20 in total
-					Solution combinedSolution = alg.solve(cmdps, budgetPerAgent * cmdps.length); // TODO replace the number with the correct limit
-					System.out.println();
-					
-					// simulate
-					sim.simulate(cmdps, combinedSolution, 1000);
-					
-					double runtime = (System.nanoTime() - startTime) / 1000000000;
-					System.out.println("Runtime with " + i + " Children and " + j + " Adults and Budget " + budgetPerAgent * cmdps.length + " and runtime " + runtime);
+					try {
+						Solution combinedSolution = alg.solve(cmdps, budgetPerAgent * cmdps.length); // TODO replace the number with the correct limit
+						System.out.println();
+						
+						// simulate
+						sim.simulate(cmdps, combinedSolution, 1000);
+						
+						double runtime = (System.nanoTime() - startTime) / 1000000000;
+						System.out.println("Runtime with " + i + " Children and " + j + " Adults and Budget " + budgetPerAgent * cmdps.length + " and runtime " + runtime);
+					}
+					catch (NoFeasibleSolutionException e) {
+						System.out.println("(" + i + ", " + 0 + ")");
+					}
 				}
 			}
 		}
 	
 	public static void main(String[] args) {
-		task1DF();
+		task3();
 	}
 }
